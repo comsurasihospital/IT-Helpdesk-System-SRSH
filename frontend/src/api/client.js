@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 const client = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
   timeout: 15000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
 });
 
 // ─── Request Interceptor: แนบ Token ──────────────────────
@@ -35,7 +35,7 @@ client.interceptors.response.use(
       return Promise.reject(err);
     }
 
-    if (err.response?.status !== 422) {
+    if (err.response?.status !== 422 && err.response?.status !== 404) {
       // Validation errors จัดการใน component เอง
       toast.error(msg);
     }

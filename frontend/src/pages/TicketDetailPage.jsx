@@ -52,7 +52,7 @@ export default function TicketDetailPage() {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
-  const { data: ticket, isLoading } = useTicket(id);
+  const { data: ticket, isLoading, isError } = useTicket(id);
   const acceptMut     = useAcceptTicket();
   const resolveMut    = useResolveTicket();
   const cancelMut     = useCancelTicket();
@@ -98,6 +98,13 @@ export default function TicketDetailPage() {
   const { register: regRating,  handleSubmit: handleRating } = useForm();
   const { register: regEdit,    handleSubmit: handleEdit,    reset: resetEdit }    = useForm();
   const { register: regEditRes, handleSubmit: handleEditRes, reset: resetEditRes } = useForm();
+
+  useEffect(() => {
+    if (isError) {
+      toast.error('ไม่พบ Ticket หรือถูกลบไปแล้ว');
+      navigate('/', { replace: true });
+    }
+  }, [isError, navigate]);
 
   if (isLoading) return (
     <AppLayout title="รายละเอียด" showBack onBack={() => navigate(-1)}>
