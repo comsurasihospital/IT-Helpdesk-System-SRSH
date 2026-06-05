@@ -1,0 +1,27 @@
+{
+  "name": "it-helpdesk-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react":              "^18.2.0",
+    "react-dom":          "^18.2.0",
+    "react-router-dom":   "^6.21.1",
+    "axios":              "^1.6.2",
+    "react-query":        "^3.39.3",
+    "recharts":           "^2.10.3",
+    "react-hot-toast":    "^2.4.1",
+    "react-hook-form":    "^7.49.2",
+    "dayjs":              "^1.11.10",
+    "@line/liff":         "^2.22.3",
+    "xlsx":               "^0.18.5",
+    "react-scripts":      "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "cross-env BUILD_PATH=E:\\IT-Helpdesk-System\\backend\\frontend-build react-scripts build"
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead"],
+    "development": ["last 1 chrome version"]
+  }
+}

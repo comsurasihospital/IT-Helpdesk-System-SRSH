@@ -1,0 +1,7 @@
+﻿node_modules/
+backend/frontend-build/
+backend/frontend-build */
+frontend/build/
+.env
+*.log
+New folder/

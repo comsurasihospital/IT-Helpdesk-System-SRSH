@@ -1,0 +1,70 @@
+-- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+--
+-- Host: localhost    Database: it_helpdesk
+-- ------------------------------------------------------
+-- Server version	8.0.45
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `prefix_id` int unsigned DEFAULT NULL,
+  `line_user_id` varchar(100) DEFAULT NULL COMMENT 'LINE User ID',
+  `line_display_name` varchar(200) DEFAULT NULL COMMENT 'LINE Display Name',
+  `line_picture_url` varchar(500) DEFAULT NULL COMMENT 'LINE Profile Picture URL',
+  `first_name` varchar(100) NOT NULL COMMENT 'ชื่อ',
+  `last_name` varchar(100) NOT NULL COMMENT 'นามสกุล',
+  `phone` varchar(20) DEFAULT NULL COMMENT 'เบอร์โทรศัพท์',
+  `department_id` int unsigned DEFAULT NULL COMMENT 'แผนก',
+  `role` enum('USER','ADMIN','SUPERVISOR') NOT NULL DEFAULT 'USER',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `last_login_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `line_user_id` (`line_user_id`),
+  KEY `idx_users_line_user_id` (`line_user_id`),
+  KEY `idx_users_role` (`role`),
+  KEY `idx_users_department` (`department_id`),
+  KEY `fk_users_prefix` (`prefix_id`),
+  CONSTRAINT `fk_users_department` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_prefix` FOREIGN KEY (`prefix_id`) REFERENCES `prefixes` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ผู้ใช้งานระบบ';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,1,NULL,NULL,NULL,'Admin','IT','000-000-0000',1,'ADMIN',1,NULL,'2026-03-06 15:22:45','2026-03-11 11:06:59'),(2,26,NULL,NULL,NULL,'Supervisor','Manager','000-000-0001',13,'SUPERVISOR',1,NULL,'2026-03-06 15:22:45','2026-05-19 11:05:57'),(3,1,'mock-1772794581805','User',NULL,'user','test','0811111111',1,'USER',1,'2026-03-06 17:56:21','2026-03-06 17:56:21','2026-03-11 15:23:53'),(58,1,'U620038aaf7cb1a868a86c7302e96398c','ғᴏʀᴅ','https://profile.line-scdn.net/0hqyNQz00TLlZjKAPgNpNQKRN4LTxAWXdESRpiZAMgIG9WHWkBTxk1YgQodGRYTTsFHUhgMFZ4cDRvO1kwfX7SYmQYc2dfEGwBTEZkuQ','ณัฐวุธ','เอี่ยมงาม','062-210-0604',1,'ADMIN',1,'2026-06-02 10:35:12','2026-05-22 13:52:13','2026-06-02 10:35:12'),(59,7,'U3b4d5203c686c7d114e2fbbc50c8b926','Kerathiyah','https://profile.line-scdn.net/0hxqrcoBHAJ15fGjgU9f9ZYC9KJDR8a35MIX86amgfKmZnKGBdeyxpOWgZeWgxejcMIH5rPmIfcWZ9bgVNJHg8VnZSOjAgKwtpNA8ScW1FPy4ydDtodwRtfQhPZWs9f2Z3JA4IZS1yKRlgTRZudggjeBlzMi8GaBZvIU1LCFooSd0wGFALcn1gPWsZcWvr','นงลักษณ์','เชาว์บรรเจิด','064-554-5535',1,'ADMIN',1,'2026-06-04 08:33:44','2026-05-22 15:01:46','2026-06-04 08:33:44'),(60,3,'Ue95cf162595ccfc5d29ee20d4b95a63a','✧✦..ᘎ▸S᷈ᗩ..✦✧','https://profile.line-scdn.net/0hH-Xlx9ZGFwJ1FQmY-1dpPAVFFGhWZE4QDnZcMRJCQDtLLVkAXCELNxQXTDsdIlABDXJQZUYVG2ZXbQwyKRguNkFCDUo9eiMKWis8EwJHO0QqXxI2JHYsGykJMDEDbFIhA3BabAcTGXEXeSQzJiQReD53G2cWZkwnBkJ7VHAneYEaF2BXWHJQYUEWQTfB','อุษา','อินมณี','090-445-9045',25,'USER',1,'2026-05-22 15:52:13','2026-05-22 15:52:13','2026-05-22 15:52:13'),(61,3,'Uf1c24c4b80e7dbc00c37c76c88084c84','彡naмм','https://profile.line-scdn.net/0hjzMXgdLgNVVgISq_IH1LaxBxNj9DUGxHG0YuNgEnPGFZFHIASkF_MwEhaDBYGHAHTEN7N1AlO2dCE3NTGzwmRChBOy4YSgV6EEYaQwllDxg6F3J3LT4te0llNGYrcxd6Tzg9ViEnEyw9FCxnCRE7XQVRFSQeTTZnK3ZZA2UTW9YPI0IATUZyNlQiY2DU','สุพัตรา','เบ็ญจวรรณ','062-298-9298',1,'ADMIN',1,'2026-06-02 15:46:25','2026-05-22 15:59:42','2026-06-02 15:46:25'),(62,3,'U99f4cfbc0ee7f27a66bc76102221d6af','สุพิชฌาย์ อิ่มวงศ์','https://profile.line-scdn.net/0hZmHRyujYBUJlKxraMGR7fBV7BihGWlxQSUgeJVN4XXBcSxIdTU8fJVgpXCEISUQQQR1NcVMpCXtHRTRNASoBQBhtBBoFQ0IQFzI2QFIrMAQIRTd1AilKbAl8J3YuYB5sSBY-WgosEwUYfCZXTwQxRwZuDww5eEIdOXxpFGAZa8EKKXIXSExCIVEoU3fR','สุพิชฌาย์','อิ่มวงศ์','096-654-9691',2,'USER',1,'2026-05-26 08:42:44','2026-05-26 08:42:44','2026-05-26 08:42:44'),(63,3,'U5d570611c0dc0649fb4069dbd459ace2','Grace_Rt','https://profile.line-scdn.net/0hQeuryTdiDkpYCx6zanpwNShbDSB7eldYcmxEf2oDVXI1b0wdcWoULD4OBHtkbk8eJj1IeTpZVHNUGHksRl3yfl87U3tkM0wdd2VEpQ','วรชกร','รัตนโชคธรณี','098-325-3530',2,'USER',1,'2026-05-26 09:25:25','2026-05-26 09:25:25','2026-05-26 09:25:25'),(64,3,'U41c23c6ea5a281a50a749ef8afdd953a','Meww ??','https://profile.line-scdn.net/0hgf6klGxNOEkbEid7RJlGd2tCOyM4Y2FbPidyLHsTMSx1KysXZHJyKCdBM3ogKywdMSYkKyZGY385JgZUYRUWK1ZxMX8ufgJsdwovdEh2ODB1V31Ef3wIR1BRZBEvXA9PdDNzTVxRYDphSjZdSwkrL2UQYQVmcAFFMUVUHx4gVsp0EE8cNnV_Ki8Rbnyv','วาสุนี','ศรีนวล','061-645-3201',8,'USER',1,'2026-05-26 10:11:24','2026-05-26 10:11:24','2026-05-26 10:11:24'),(65,20,'Ue830dc200a6c5b9c3ae31d4a6f96dde8','NICHATHAN?','https://profile.line-scdn.net/0hUrvpCjgbCl1bCRW2MI50YytZCTd4eFNPJDtHPWgPV2szPBoIJD9MMjpeUDkxbk8DJGxDaD5aVj55aw8MNQRHXgdyKQ5jWDkXMygrTy4JBBRhfDJMDTcyaClIIw02fhdsIQ4yQzFnKxASPB9rPzUyRDRPIzMNMRRRMF5mC147ZN40C30Idm5NPm8KXGjv','นิชาธาร','กาทอง','081-993-0459',24,'USER',1,'2026-06-03 13:22:55','2026-05-27 10:14:51','2026-06-03 13:22:55'),(66,3,'U8fb278dcd41af2ab4d8c8ef2b90f6ec4','SMILD???','https://profile.line-scdn.net/0h8gZruo7XZ0h3C3id1BQZdgdbZCJUej5aCW0sLEFebi1NaCEWDmsgLksLP38ZOCMfCGsueUVfPXtVO0RpCzdfWxxCfg0DRHNaKWhyUipLWjwea3VJRy93Ux5jXig3eWYXMHEpbSpQQBMWM319JA9aVDV0bXFMfSJIW1wLHnI5CcsYCRAdWmwgK0MIMX3D','นวลจุฑา','ปานพรม','098-296-1702',26,'USER',1,'2026-05-27 11:08:16','2026-05-27 11:08:16','2026-05-27 11:08:16'),(67,3,'U2624469ee29c6c841bae5629f8b46e6f','12 เอิร์น ?','https://profile.line-scdn.net/0hMBcjOSAdEm1OEw4f5FJsUz5DEQdtYkt_a3FdCiwQHgh1cVJpanBaW3pGGwl0IgI-MnNcD3JAGA1sWyNmDDdddSFmMgp0JAJhYRchUhVBMikPYRVOIxAdQB5wNC4rQBd4AygaDRxqSyh1awg9JSoiXw96BTkvSxw5F0R-O0shfO4hEWU4Y3RVDnoQRFj6','สุธิชา','เพ่งไพฑูรย์','065-938-4399',5,'USER',1,'2026-05-27 12:51:15','2026-05-27 12:51:15','2026-05-27 12:51:15'),(68,2,'Ub385c8932923a8e3d26d87c3b61d03e0','TAK','https://profile.line-scdn.net/0hJlZhCsRWFUN3EQr6PH9rfQdBFilUYExRXX8JI0oWSXNKclMUU3JcJEdES3IaKVdCXScIcEBCTCRVIi5sHBxeZxp1SSgrRDUdBiwGYjlKFXVKdFZxOAonZTZBDRcpWBRXIxwyW14QDTMZdDlALgwPJipuLxBNfzESEEZ5FXIje8AYE2IWWnZSIEMSQ3bD','พัชรินทร์','พรมโคตร','080-044-2677',18,'USER',1,'2026-05-27 14:09:56','2026-05-27 14:09:56','2026-05-27 14:09:56'),(69,3,'U47684d2eed1da8eababbbc80226c2146','Sakanyu','https://profile.line-scdn.net/0hB3hvKG3VHRxFDwJ4DKZjIjVfHnZmfkQObD1VfnBcFypxOF9CPTlWLyIOFHgtPAlPbDlUenEOESpnPDIyFjknBi1nG3l6dzkYNWkKLSoPF1V_aDEIKRchEhkMJFotWQQOKBo7DjhRP00qSD0OKjcULwZNX1ouTzQ4ElhxSkA9c58qDWpJaGhaf3EMSynx','สุกัญญา','จามร','084-571-4662',31,'USER',1,'2026-05-28 14:39:40','2026-05-28 14:39:40','2026-05-28 14:39:40'),(70,3,'U55e583a831b46c7fc2a5a1d5617ed3e4','Nut_Eiei','https://profile.line-scdn.net/0hdmzJTn8kO0JXMycyu4pFfCdjOCh0QmJQc1V9ImozMHtuC3hAc1QhcWA6ZHVrVCkVKFN2LWI0YSZ1ZR9RABEgYwppbQYSbSNAIAIUXj9lBBYBUwccDS8PIwRqLCIZRHprHC4sIhgzJxo0UwtpJVFzTDlDLC0tBgZdGmRXFFIBVcE4MUwXelR8IWMwbXfj','ณัฐนันท์','โตแก้ว','064-273-5072',2,'USER',1,'2026-05-29 09:59:28','2026-05-29 09:59:28','2026-05-29 09:59:28'),(71,15,'U4e4dae04ab1bc7dd177486750a0de237','? ? ? ? ? ? ?','https://profile.line-scdn.net/0h93rp8xVVZhxfCXp3E74YIi9ZZXZ8eD8Ocmd-Kj0IPCtqPnZPJzp6KW8BaC5iMCRPJmgpfGlcPXx9f1coJjRqLgJnYkkYUClNIGt8emkOTnkcMF8MdQx2EQpCUXQmX1hIABNJHzRTYU8HXygfAyYoLzRJWkQXbXkCBl4KSlo7CJ8wCxFJcm4hf2sKMCnr','ลภัสรดา','พิมพ์สอาด','098-946-2464',2,'USER',1,'2026-06-02 13:06:52','2026-06-02 13:06:52','2026-06-02 13:06:52'),(72,3,'Ub99089b944bd29de512d33485cfdff37','?ⓡⓤⓝⓖⓡⓐⓦⓔⓔ_ⓐⓤⓜ?','https://profile.line-scdn.net/0h8fxWHqkvZ0lVLnjY0wwZdyV-ZCN2Xz5bKxguKTIuaXxrH3NKLB96f2N-bHBuHSAae00qL2QsO3B3a3x6Iwh2Zj4nexkvAlMbByZuaz52RTkDXXpvfwx4ZAVSTzIoWWcDKjZoUz1RRx8XVVUfOixvfCRnXy87QlREPHkLH1AcCco6LBAceEkgKmEtMXzh','รุ่งระวี','ทิมทอง','063-597-4991',2,'USER',1,'2026-06-02 14:21:37','2026-06-02 14:21:37','2026-06-02 14:21:37'),(73,3,'U32d0203fdf918b1b7fb3f53a4e2cb845','Tipsuda','https://profile.line-scdn.net/0hlGDkubGNM2hpEiL4rHtNVhlCMAJKY2p6F3x-C10WP14AJX05EiZ7XlpHPl1ccHA5FiR_WlVAPVtLTA9jJyQAawtwCVBdeH03ARoKawRhLhkNRQk9LRwSeCBZBRsUfD9-PxchbFhOFAoqSgxXAnIuRiFXGD0GdDMiFkVfPmwgXesGEEQ9RHV0C10RZV3d','ทิพยสุดา','อินทวารี','083-630-0544',7,'USER',1,'2026-06-02 14:37:31','2026-06-02 14:37:31','2026-06-02 14:37:31'),(74,3,'U3a7e52eb44bba78c4c89a9d88e80b769','สุวรรณา  ?แก้ว?','https://profile.line-scdn.net/0h42ixG27Qax1EAXvyR3QVYjRRaHdncDIPbmQmeyNRMCl7OCUca2IjeHVSMyhwNSxIazMhc3UENC9IEhx7WleXKUMxNix4OSlKa28h8g','สุวรรณา','เขื่อนแก้ว','086-556-7813',21,'USER',1,'2026-06-02 15:44:45','2026-06-02 15:44:45','2026-06-02 15:44:45'),(75,3,'U49e8aba3f6199d7ede8c1332c81a8028','ℙ?ℕ????ℕ ?','https://profile.line-scdn.net/0hblvSM6q_PUNbKiJjpXhDfSt6Pil4W2RRIEl1d2kvM3M0TXkScBxxIWZ5NHc2GnkSJUlxJ2ouNnR5biFKFhgSVRlhFhQiUwVxDDAJcBMqA3Q6YRROMRQoTBxaKBUOZx18dD8FIhFhHTdhbh9PDS52OTt8MXUybjtrIX1RFV4YU8A0KEoWdk16IG8pa3bv','ปานตะวัน','มีล้อม','063-639-8514',5,'USER',1,'2026-06-04 09:48:02','2026-06-04 09:48:02','2026-06-04 09:48:02');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-04 12:53:00

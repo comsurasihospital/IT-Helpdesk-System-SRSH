@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT Helpdesk — API Reference</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
+    background: #1e293b; border-right: 1px solid #334155;
+    overflow-y: auto; padding: 20px 0;
+  }
+  .sidebar h2 { padding: 0 16px 12px; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar a {
+    display: block; padding: 6px 16px; color: #94a3b8; font-size: 0.8rem;
+    text-decoration: none; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { color: #e2e8f0; border-left-color: #38bdf8; background: #263348; }
+  .sidebar .section { padding: 10px 16px 4px; color: #475569; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+  .main { margin-left: 220px; padding: 32px 40px; max-width: 900px; }
+  h1 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 6px; }
+  .subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 40px; }
+  .group { margin-bottom: 40px; }
+  .group-title {
+    font-size: 1.1rem; font-weight: 700; color: #f1f5f9;
+    padding-bottom: 8px; border-bottom: 1px solid #334155;
+    margin-bottom: 16px;
+  }
+  .endpoint {
+    background: #1e293b; border: 1px solid #334155;
+    border-radius: 8px; margin-bottom: 12px; overflow: hidden;
+  }
+  .ep-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+  }
+  .ep-header:hover { background: #263348; }
+  .method {
+    font-size: 0.7rem; font-weight: 700; padding: 3px 8px;
+    border-radius: 4px; min-width: 55px; text-align: center; letter-spacing: 0.5px;
+  }
+  .GET    { background: #1d4ed8; color: #bfdbfe; }
+  .POST   { background: #15803d; color: #bbf7d0; }
+  .PUT    { background: #b45309; color: #fde68a; }
+  .DELETE { background: #b91c1c; color: #fecaca; }
+  .path { font-family: monospace; font-size: 0.85rem; color: #e2e8f0; flex: 1; }
+  .desc { font-size: 0.75rem; color: #64748b; }
+  .auth-badge {
+    font-size: 0.65rem; padding: 2px 6px; border-radius: 10px;
+    background: #1e3a5f; color: #93c5fd;
+  }
+  .ep-body { padding: 0 16px 16px; display: none; }
+  .ep-body.open { display: block; }
+  .ep-body h4 { color: #94a3b8; font-size: 0.75rem; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  pre {
+    background: #0f172a; border: 1px solid #334155; border-radius: 6px;
+    padding: 12px; font-size: 0.75rem; overflow-x: auto; color: #86efac; line-height: 1.6;
+  }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin: 2px; }
+  .tag-user  { background: #1e3a5f; color: #93c5fd; }
+  .tag-admin { background: #3b1c5f; color: #d8b4fe; }
+  .tag-sup   { background: #1c3b1c; color: #86efac; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>IT Helpdesk API</h2>
+  <span class="section">Authentication</span>
+  <a href="#auth">Auth</a>
+  <span class="section">Tickets</span>
+  <a href="#tickets">Tickets CRUD</a>
+  <a href="#ticket-actions">Ticket Actions</a>
+  <span class="section">Dashboard</span>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#reports">Reports</a>
+  <span class="section">Management</span>
+  <a href="#users">Users</a>
+</nav>
+
+<div class="main">
+  <h1>🏥 IT Helpdesk API</h1>
+  <p class="subtitle">Base URL: <code style="color:#38bdf8">http://localhost:5000/api</code> &nbsp;|&nbsp; v1.0.0 &nbsp;|&nbsp;
+    <span class="tag tag-user">USER</span>
+    <span class="tag tag-admin">ADMIN</span>
+    <span class="tag tag-sup">SUPERVISOR</span>
+  </p>
+
+  <!-- AUTH -->
+  <div class="group" id="auth">
+    <div class="group-title">🔐 Authentication</div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method POST">POST</span>
+        <span class="path">/auth/line-login</span>
+        <span class="desc">เข้าสู่ระบบด้วย LINE User ID</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request Body</h4>
+        <pre>{
+  "lineUserId":       "Uxxxxxxxxx",    // จาก LIFF getProfile()
+  "lineDisplayName":  "John Doe",
+  "linePictureUrl":   "https://..."
+}</pre>
+        <h4>Response (ผู้ใช้ใหม่)</h4>
+        <pre>{ "success": true, "data": { "isNewUser": true, "lineUserId": "Uxx" } }</pre>
+        <h4>Response (ผู้ใช้เดิม)</h4>
+        <pre>{ "success": true, "data": { "isNewUser": false, "token": "eyJ...", "user": {...} } }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method POST">POST</span>
+        <span class="path">/auth/register</span>
+        <span class="desc">ลงทะเบียนผู้ใช้ใหม่</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request Body</h4>
+        <pre>{
+  "lineUserId":    "Uxxxxxxxxx",
+  "firstName":     "สมชาย",
+  "lastName":      "ใจดี",
+  "phone":         "081-234-5678",
+  "departmentId":  2
+}</pre>
+        <h4>Response</h4>
+        <pre>{ "success": true, "data": { "token": "eyJ...", "user": { "id": 10, "role": "USER" } } }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/auth/me</span>
+        <span class="desc">ข้อมูล User ปัจจุบัน</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+      <div class="ep-body">
+        <h4>Response</h4>
+        <pre>{ "success": true, "data": { "id": 1, "firstName": "สมชาย", "role": "USER", "departmentName": "งานOPD" } }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/auth/departments</span>
+        <span class="desc">รายชื่อแผนก (ใช้ตอน Register)</span>
+      </div>
+      <div class="ep-body">
+        <h4>Response</h4>
+        <pre>[{ "id": 1, "name": "งานเทคโนโลยีสารสนเทศ", "code": "IT" }, ...]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKETS -->
+  <div class="group" id="tickets">
+    <div class="group-title">🎫 Tickets</div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/tickets</span>
+        <span class="desc">รายการ Ticket (USER เห็นเฉพาะตัวเอง)</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+      <div class="ep-body">
+        <h4>Query Params</h4>
+        <pre>?page=1&limit=20&status=OPEN&categoryId=1&search=keyword&startDate=2025-01-01&endDate=2025-12-31</pre>
+        <h4>Response</h4>
+        <pre>{
+  "data": {
+    "tickets": [...],
+    "pagination": { "page": 1, "limit": 20, "total": 45, "totalPages": 3 }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/tickets/:id</span>
+        <span class="desc">รายละเอียด Ticket พร้อม comments, logs, attachments</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method POST">POST</span>
+        <span class="path">/tickets</span>
+        <span class="desc">สร้าง Ticket ใหม่ (รองรับ multipart/form-data)</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request (multipart/form-data)</h4>
+        <pre>categoryId:  1
+title:       "HOSxP ค้างหน้าจอ"
+description: "เปิดโปรแกรมแล้ว..." (อย่างน้อย 10 ตัวอักษร)
+priority:    MEDIUM        (LOW | MEDIUM | HIGH | CRITICAL)
+images:      [file1, file2] (optional, max 5 files)</pre>
+        <h4>Response 201</h4>
+        <pre>{ "data": { "id": 42, "ticketNo": "TK2025001", "status": "OPEN", ... } }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method DELETE">DELETE</span>
+        <span class="path">/tickets/:id</span>
+        <span class="desc">ลบ Ticket</span>
+        <span class="auth-badge">🔒 ADMIN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET ACTIONS -->
+  <div class="group" id="ticket-actions">
+    <div class="group-title">⚡ Ticket Actions</div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method PUT">PUT</span>
+        <span class="path">/tickets/:id/accept</span>
+        <span class="desc">Admin รับงาน → IN_PROGRESS</span>
+        <span class="auth-badge">🔒 ADMIN</span>
+      </div>
+      <div class="ep-body"><h4>Response</h4><pre>{ "message": "รับงานเรียบร้อย", "data": { "status": "IN_PROGRESS" } }</pre></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method PUT">PUT</span>
+        <span class="path">/tickets/:id/resolve</span>
+        <span class="desc">Admin ปิดงาน → RESOLVED + คำนวณ SLA + ส่ง LINE</span>
+        <span class="auth-badge">🔒 ADMIN</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request Body</h4>
+        <pre>{ "resolutionNote": "แก้ไขโดยติดตั้ง driver ใหม่" }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method PUT">PUT</span>
+        <span class="path">/tickets/:id/cancel</span>
+        <span class="desc">ยกเลิก Ticket</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method PUT">PUT</span>
+        <span class="path">/tickets/:id/rate</span>
+        <span class="desc">User ให้คะแนนความพึงพอใจ 1-5 ดาว</span>
+        <span class="auth-badge">🔒 USER</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request Body</h4>
+        <pre>{ "score": 5, "note": "แก้ไขได้รวดเร็วมาก" }</pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method POST">POST</span>
+        <span class="path">/tickets/:id/comments</span>
+        <span class="desc">เพิ่ม Comment</span>
+        <span class="auth-badge">🔒 Token</span>
+      </div>
+      <div class="ep-body">
+        <h4>Request Body</h4>
+        <pre>{ "comment": "ข้อความ", "isInternal": false }</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="group" id="dashboard">
+    <div class="group-title">📊 Dashboard</div>
+
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/dashboard/summary</span>
+        <span class="desc">สรุปภาพรวม: จำนวน Ticket, SLA, Recent 10</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/dashboard/chart/monthly</span>
+        <span class="desc">กราฟ Ticket รายเดือน ?year=2025</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/dashboard/chart/category</span>
+        <span class="desc">กราฟตามประเภทปัญหา</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/dashboard/chart/department</span>
+        <span class="desc">กราฟตามแผนก</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="group" id="reports">
+    <div class="group-title">📈 Reports</div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/reports/tickets</span>
+        <span class="desc">รายงาน Ticket แบบ Filter (startDate, endDate, status, ...)</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/reports/sla</span>
+        <span class="desc">รายงาน SLA Performance</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/reports/admin-performance</span>
+        <span class="desc">ประสิทธิภาพทีม IT</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="group" id="users">
+    <div class="group-title">👥 User Management</div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method GET">GET</span>
+        <span class="path">/users</span>
+        <span class="desc">รายชื่อผู้ใช้ทั้งหมด ?role=ADMIN&search=ชื่อ</span>
+        <span class="auth-badge">🔒 ADMIN/SUP</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method PUT">PUT</span>
+        <span class="path">/users/:id</span>
+        <span class="desc">แก้ไขข้อมูลผู้ใช้</span>
+        <span class="auth-badge">🔒 ADMIN</span>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="ep-header" onclick="toggle(this)">
+        <span class="method DELETE">DELETE</span>
+        <span class="path">/users/:id</span>
+        <span class="desc">ระงับบัญชี (soft delete)</span>
+        <span class="auth-badge">🔒 ADMIN</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+</script>
+</body>
+</html>
