@@ -6,6 +6,16 @@ const { rules, validate }         = require('../middleware/validate');
 const { asyncHandler }            = require('../middleware/errorHandler');
 const { upload, processImages }   = require('../middleware/upload');
 
+// GET  /api/tickets/categories — ดึงประเภทปัญหาทั้งหมด (ไม่ต้อง login)
+router.get('/categories', asyncHandler(async (req, res) => {
+  const { pool } = require('../config/db');
+  const response = require('../utils/response');
+  const [rows] = await pool.execute(
+    'SELECT id, code, name, sla_minutes FROM categories WHERE is_active = 1 ORDER BY id'
+  );
+  return response.success(res, rows);
+}));
+
 // ทุก route ต้อง login ก่อน
 router.use(authenticate);
 

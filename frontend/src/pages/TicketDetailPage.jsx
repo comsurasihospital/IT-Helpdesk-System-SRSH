@@ -8,7 +8,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTicket, useAcceptTicket, useResolveTicket,
          useCancelTicket, useRateTicket, useAddComment,
          useEditTicket, useEditResolved } from '../hooks/useTickets';
+import { useQuery }        from 'react-query';
 import { useAuth }         from '../context/AuthContext';
+import { ticketAPI }       from '../api/services';
 import AppLayout           from '../components/common/AppLayout';
 import { useForm }         from 'react-hook-form';
 // ── Inline constants (ไม่ import จาก utils เพื่อป้องกัน undefined) ──
@@ -68,15 +70,13 @@ export default function TicketDetailPage() {
   const [showImages,  setShowImages]  = useState(false);
   const [activeImg,   setActiveImg]   = useState(0);
 
-  // ── SLA options ตรงกับ categories ──
-  const SLA_OPTIONS = [
-    { value: 'SOFTWARE',  label: 'โปรแกรม HOSxP ขัดข้อง',                              hours: 4  },
-    { value: 'PRINTER',   label: 'เครื่องพิมพ์ขัดข้อง',                                hours: 8  },
-    { value: 'COMPUTER',  label: 'เครื่องคอมพิวเตอร์ขัดข้อง',                          hours: 8  },
-    { value: 'NETWORK',   label: 'ระบบอินเทอร์เน็ตขัดข้อง',                            hours: 2  },
-    { value: 'INFO_REQ',  label: 'การขอข้อมูลสารสนเทศทางการแพทย์',                     hours: 24 },
-    { value: 'PUBLISH',   label: 'การเผยแพร่ข่าวสาร ลงในเว็บไซต์และสื่อสังคมโรงพยาบาล', hours: 48 },
-  ];
+  // ── ดึง categories จาก API ──
+  const { data: categories = [] } = useQuery(
+    'categories',
+    () => ticketAPI.getCategories().then(r => r.data.data),
+    { staleTime: 300000 }
+  );
+  const formatSlaMins = (mins) => mins >= 1440 ? `${mins/1440} วัน` : mins >= 60 ? `${mins/60} ชม.` : `${mins} นาที`;
 
   // default ค่า resolve form ทุกครั้งที่ ticket โหลด / popup เปิด
   useEffect(() => {
@@ -489,15 +489,8 @@ export default function TicketDetailPage() {
                 <select className={`form-control ${resolveErrors.slaType ? 'error' : ''}`}
                   {...regResolve('slaType', { required: 'กรุณาเลือกประเภทงาน' })}>
                   <option value="">— เลือกประเภทงาน —</option>
-                  {[
-                    { value: 'SOFTWARE',  label: 'โปรแกรม HOSxP ขัดข้อง',                               hours: 4  },
-                    { value: 'PRINTER',   label: 'เครื่องพิมพ์ขัดข้อง',                                 hours: 8  },
-                    { value: 'COMPUTER',  label: 'เครื่องคอมพิวเตอร์ขัดข้อง',                           hours: 8  },
-                    { value: 'NETWORK',   label: 'ระบบอินเทอร์เน็ตขัดข้อง',                             hours: 2  },
-                    { value: 'INFO_REQ',  label: 'การขอข้อมูลสารสนเทศทางการแพทย์',                      hours: 24 },
-                    { value: 'PUBLISH',   label: 'การเผยแพร่ข่าวสาร ลงในเว็บไซต์และสื่อสังคมโรงพยาบาล', hours: 48 },
-                  ].map(o => (
-                    <option key={o.value} value={o.value}>{o.label} (SLA {o.hours} ชม.)</option>
+                  {categories.map(o => (
+                    <option key={o.code} value={o.code}>{o.name} (SLA {formatSlaMins(o.sla_minutes)})</option>
                   ))}
                 </select>
                 {resolveErrors.slaType && <p className="form-error">{resolveErrors.slaType.message}</p>}

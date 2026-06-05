@@ -5,17 +5,11 @@ import { useForm }           from 'react-hook-form';
 import { useQuery }          from 'react-query';
 import { useCreateTicket }   from '../hooks/useTickets';
 import { useAuth }           from '../context/AuthContext';
-import { authAPI }           from '../api/services';
+import { authAPI, ticketAPI } from '../api/services';
 import toast                 from 'react-hot-toast';
 
-const CATEGORIES = [
-  { id: 1, code: 'SOFTWARE', label: 'โปรแกรม HOSxP / โปรแกรมอื่น ๆ ขัดข้อง',            icon: '💻', sla: '30 นาที' },
-  { id: 2, code: 'PRINTER',  label: 'เครื่องพิมพ์ขัดข้อง',               icon: '🖨️', sla: '15 นาที' },
-  { id: 3, code: 'COMPUTER', label: 'เครื่องคอมพิวเตอร์ขัดข้อง',         icon: '🖥️', sla: '30 นาที' },
-  { id: 4, code: 'NETWORK',  label: 'ระบบอินเทอร์เน็ตขัดข้อง',           icon: '📶', sla: '20 นาที' },
-  { id: 5, code: 'INFO_REQ', label: 'การขอข้อมูลสารสนเทศทางการแพทย์',    icon: '📊', sla: '1 วัน'  },
-  { id: 6, code: 'PUBLISH',  label: 'การเผยแพร่ข่าวสาร / Social Media',  icon: '📢', sla: '1 วัน'  },
-];
+const CAT_ICON = { SOFTWARE: '💻', PRINTER: '🖨️', COMPUTER: '🖥️', NETWORK: '📶', INFO_REQ: '📊', PUBLISH: '📢' };
+const formatSla = (mins) => mins >= 1440 ? `${mins/1440} วัน` : mins >= 60 ? `${mins/60} ชม.` : `${mins} นาที`;
 
 const formatPhone = (val) => {
   const digits = val.replace(/\D/g, '').slice(0, 10);
@@ -60,6 +54,12 @@ export default function CreateTicketPage() {
   const { data: prefixes = [] } = useQuery(
     'prefixes',
     () => authAPI.getPrefixes().then(r => r.data.data),
+    { staleTime: 60000 }
+  );
+
+  const { data: categories = [] } = useQuery(
+    'categories',
+    () => ticketAPI.getCategories().then(r => r.data.data),
     { staleTime: 60000 }
   );
 
@@ -136,7 +136,7 @@ export default function CreateTicketPage() {
       {/* Step 1 */}
       {step === 1 && (
         <div style={{ padding: '0 16px 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {CATEGORIES.map((cat, i) => (
+          {categories.map((cat, i) => (
             <button key={cat.id}
               className={`animate-fadeInUp stagger-${Math.min(i+1,4)}`}
               onClick={() => { setSelectedCat(cat); setStep(2); }}
@@ -150,12 +150,12 @@ export default function CreateTicketPage() {
               onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
             >
-              <span style={{ fontSize: '2rem', lineHeight: 1 }}>{cat.icon}</span>
+              <span style={{ fontSize: '2rem', lineHeight: 1 }}>{CAT_ICON[cat.code] || "🔧"}</span>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--gray-800)', marginBottom: 3 }}>
-                  {cat.label}
+                  {cat.name}
                 </p>
-                <p style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>⏱ SLA: {cat.sla}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>⏱ SLA: {formatSla(cat.sla_minutes)}</p>
               </div>
               <span style={{ color: 'var(--gray-400)', fontSize: '1.2rem' }}>›</span>
             </button>
@@ -241,7 +241,7 @@ export default function CreateTicketPage() {
               </label>
               <textarea className={`form-control ${errors.description ? 'error' : ''}`}
                 rows={6}
-                placeholder="อธิบายปัญหาที่พบ เช่น&#10;- เกิดขึ้นเมื่อไหร่&#10;- อาการที่พบ&#10;- เห็น error อะไร"
+                placeholder="อธิบายปัญหาที่พบ เช่น&#10;- เกิดขึ้นเมื่อไหร่&#10;- ทำอะไรอยู่&#10;- เห็น error อะไร"
                 style={{ fontSize: '0.95rem', lineHeight: 1.7, resize: 'none' }}
                 {...register('description', {
                   required: 'กรุณากรอกรายละเอียด',

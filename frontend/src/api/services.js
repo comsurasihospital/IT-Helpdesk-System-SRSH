@@ -18,6 +18,7 @@ export const authAPI = {
 
 // ─── Tickets ──────────────────────────────────────────────
 export const ticketAPI = {
+  getCategories: ()             => client.get('/tickets/categories'),
   getAll: (params) => client.get('/tickets', { params }),
 
   getById: (id) => client.get(`/tickets/${id}`),

@@ -19,8 +19,6 @@ const CAT_ICON = {
   NETWORK: '🌐', INFO_REQ: '📊', PUBLISH: '📢',
 };
 
-const SLA_MINS = { SOFTWARE: 30, PRINTER: 30, COMPUTER: 30, NETWORK: 20, INFO_REQ: 1440, PUBLISH: 1440 };
-
 const formatDate = (d) => d
   ? new Date(d).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   : '-';
@@ -39,8 +37,8 @@ export default function TicketCard({ ticket: t, showUser = false, className = ''
   const status  = t.status || 'OPEN';
   const dot     = STATUS_DOT[status] || STATUS_DOT.OPEN;
   const slaType = t.sla_type || t.category_code || '';
-  const slaMins = SLA_MINS[slaType];
-  const slaTime = slaMins >= 1440 ? `${slaMins/1440} วัน` : slaMins >= 60 ? `${slaMins/60} ชม.` : `${slaMins} นาที`;
+  const slaMins = t.sla_minutes || null;
+  const slaTime = slaMins ? (slaMins >= 1440 ? `${slaMins/1440} วัน` : slaMins >= 60 ? `${slaMins/60} ชม.` : `${slaMins} นาที`) : null;
   const icon    = CAT_ICON[slaType] || '🔧';
 
   return (
