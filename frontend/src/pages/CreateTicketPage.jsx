@@ -90,7 +90,7 @@ export default function CreateTicketPage() {
 
     const fd = new FormData();
     fd.append('categoryId',       selectedCat.id);
-    fd.append('title',            selectedCat.label);
+    fd.append('title',            selectedCat.name);
     fd.append('description',      data.description);
     fd.append('priority',         'MEDIUM');
     fd.append('reporterPrefixId', data.reporterPrefixId || '');
@@ -172,10 +172,10 @@ export default function CreateTicketPage() {
             background: 'var(--primary-50)', border: '1px solid var(--primary-100)',
             borderRadius: 12, padding: '10px 14px', marginBottom: 20,
           }}>
-            <span style={{ fontSize: '1.5rem' }}>{selectedCat?.icon}</span>
+            <span style={{ fontSize: '1.5rem' }}>{CAT_ICON[selectedCat?.code] || '🔧'}</span>
             <div>
               <p style={{ fontSize: '0.72rem', color: 'var(--primary)', fontWeight: 600 }}>ประเภทปัญหา</p>
-              <p style={{ fontSize: '0.88rem', color: 'var(--gray-800)', fontWeight: 600 }}>{selectedCat?.label}</p>
+              <p style={{ fontSize: '0.88rem', color: 'var(--gray-800)', fontWeight: 600 }}>{selectedCat?.name}</p>
             </div>
           </div>
 

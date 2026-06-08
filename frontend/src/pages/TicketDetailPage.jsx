@@ -172,7 +172,7 @@ export default function TicketDetailPage() {
             </span>
           </div>
           <p style={{ fontSize: '1rem', fontWeight: 700, marginTop: 8, color: 'var(--gray-800)' }}>
-            {ticket.title}
+            {ticket.title || ticket.category_name}
           </p>
           <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: 4 }}>
             {fromNow(ticket.opened_at)}
