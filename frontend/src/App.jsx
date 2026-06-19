@@ -54,6 +54,8 @@ function AppRoutes() {
     <Routes>
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
+      {/* Public — ไม่ต้อง login */}
+      <Route path="/public-dashboard" element={<DashboardPage />} />  
 
       {/* USER routes */}
       <Route path="/" element={

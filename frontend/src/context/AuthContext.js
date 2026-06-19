@@ -14,11 +14,17 @@ export function AuthProvider({ children }) {
   const [liffReady,   setLiffReady]   = useState(false);
   const [loading,     setLoading]     = useState(true);
 
-  // Init LIFF (เฉพาะเมื่อมี LIFF_ID จริง)
   useEffect(() => {
+    // ถ้าเป็น public route — ข้าม LIFF และ auth ทั้งหมด
+    const isPublicRoute = window.location.pathname.startsWith('/public-dashboard');
+    if (isPublicRoute) {
+      setLiffReady(true);
+      setLoading(false);
+      return;
+    }
+
     const liffId = process.env.REACT_APP_LIFF_ID;
     if (!liffId || liffId === 'your_liff_id_here') {
-      // Dev mode — ข้าม LIFF
       setLiffReady(true);
       setLoading(false);
       return;
@@ -36,12 +42,10 @@ export function AuthProvider({ children }) {
         if (!token) {
           await handleLineLogin(profile);
         } else {
-          // มี token อยู่แล้ว — sync role/user จาก DB ทุกครั้ง
           try {
             const meRes = await authAPI.getMe();
             saveSession(token, meRes.data.data);
           } catch {
-            // token หมดอายุ — login ใหม่
             await handleLineLogin(profile);
           }
         }
@@ -89,13 +93,11 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  // Dev Mock Login — เรียก API จริงเพื่อดึง user ตาม role จาก DB
   const mockLogin = async (role = 'USER') => {
     try {
       const res = await authAPI.getMockUser(role);
       const data = res.data.data;
       const mockToken = 'mock.' + btoa(JSON.stringify({ userId: data.id, role: data.role })) + '.mock';
-      // save token ก่อน แล้วดึง /me เพื่อให้ได้ข้อมูลครบ รวม prefix_id
       localStorage.setItem('token', mockToken);
       try {
         const meRes = await authAPI.getMe();
